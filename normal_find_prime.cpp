@@ -1,3 +1,4 @@
+#include <mpi.h>
 #include <iostream>
 #include <cstdlib>
 #include <cmath>
@@ -12,6 +13,11 @@ int main(int argc, char** argv) {
         return -1;
     }
     int n = atoi(argv[1]);
+    n = pow(2, n) * 1000;
+    MPI_Init(NULL, NULL);
+    int world_size;
+    MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+    double startTime = MPI_Wtime();
     // remember to remove 0 and 1
     vector<bool> prime = vector<bool>(n + 1, true);
     int loopEnd = (int)floor(sqrt(n));
@@ -29,6 +35,9 @@ int main(int argc, char** argv) {
             ++count;
         }
     }
+    double endTime = MPI_Wtime();
     cout << "There are " << count << " primes before " << n << endl;
-    return 0;
+    cout << "Spending " << endTime - startTime << " using " << world_size << " processes" << endl;
+
+    MPI_Finalize();
 }
